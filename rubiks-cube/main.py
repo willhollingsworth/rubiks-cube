@@ -1,34 +1,83 @@
 
 class Cube():
-    default_state = [
-    ['o', 'o', 'o'],
-    ['o', 'o', 'o'],
-    ['o', 'o', 'o'],
-    ['b', 'b', 'b'],
-    ['b', 'b', 'b'],
-    ['b', 'b', 'b'],
-    ['w', 'w', 'w', 'r', 'r', 'r', 'y', 'y', 'y'],
-    ['w', 'w', 'w', 'r', 'r', 'r', 'y', 'y', 'y'],
-    ['w', 'w', 'w', 'r', 'r', 'r', 'y', 'y', 'y'],
-    ['g', 'g', 'g'],
-    ['g', 'g', 'g'],
-    ['g', 'g', 'g'],
-    ]
-    def __init__(self,initial_state = default_state):
-        self.state : list[list] = initial_state
-        self.horizontal_rows = [i for i, row in enumerate(self.state) if len(row) > 3]
+    ''' A class to represent a Rubik's Cube '''
+   
+    colours = 'OBWRYG'
+    width = 3
+    height = width * 4
 
-    def print_state(self):
-        ''' print the current state of the cube '''
+    def __init__(self, initial_state: str = ''):
+        self.horizontal_rows = self.determine_horizontal_rows()
+        if len(initial_state) < 1:
+            initial_state = self.build_default_string()
+        self.state : list[list] = self.build_state(initial_state)
+
+    def __repr__(self):
+        ''' output a string of the current state of the cube '''
         separator = ' '
+        string = ''
         for i, line in enumerate(self.state):
-            statement = separator.join([item for item in line])
+            line_string = separator.join([item for item in line]) + '\n'
             if i not in self.horizontal_rows:
-                statement = separator * 6 + statement
-            print(statement)
+                # if not a horizontal row, add space offsets to help allign the string output
+                line_string = separator * 6 + line_string
+            string += line_string
+        return string
 
+    def determine_horizontal_rows(self):
+        ''' determine which rows of the cube are the longer horizontal rows'''
+        horizontal_rows: list = list(range(self.width * 4))
+        start_slice = self.width * 2        
+        end_slice = self.width * 3
+        return horizontal_rows[start_slice : end_slice]
+
+    def build_state(self, cube_string: str):
+        '''
+        build a cube from a string
+        the format is a long string of colours going left to right, top to bottom
+        the unwrapped cube is a reversed cross shape
+        an example below with each character representing it's 3x3 grid
+            r
+            g
+          w b y
+            o
+        '''
+        cube: list[list] = []
+        start = 0
+        end = 0
+        for row in range(self.height):
+            if row in self.horizontal_rows:
+                end += self.width * 3
+            else:
+                end += self.width
+            sliced_string = cube_string[start : end]
+            row_list = [c for c in sliced_string]
+            cube.append(row_list)
+            if row in self.horizontal_rows:
+                start += self.width * 3
+            else:
+                start += self.width
+        return cube
+        
+    def build_default_string(self):
+        ''' 
+        build a default string using the objects colours
+        ended up being more complicated and hacky than I wanted due to the wide horizontal rows
+        '''
+        cube_string = ''
+        for row in range(self.height):
+            colour_index = int(row / self.width)
+            if row < self.horizontal_rows[0]:
+              cube_string += self.colours[colour_index] * 3
+            elif row in self.horizontal_rows:
+                for h_row in self.horizontal_rows:
+                    colour_index = int(h_row - self.width - 1)
+                    cube_string += self.colours[colour_index] * 3
+            elif row > self.horizontal_rows[-1]:
+                cube_string += self.colours[-1] * 3
+        return cube_string
 
 if __name__ == '__main__':
     cube = Cube()
-    cube.print_state()
+    print(cube)
 
