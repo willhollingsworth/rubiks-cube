@@ -12,6 +12,7 @@ class Cube():
             initial_state = self.build_default_string()
         self.state : list[list] = self.build_state(initial_state)
 
+    # MARK:Repr
     def __repr__(self)  -> str:
         ''' output a string of the current state of the cube '''
         separator = ' '
@@ -24,6 +25,7 @@ class Cube():
             string += line_string
         return string
     
+    # MARK:Rows
     @property
     def rows(self) -> list[list[str]]:
         ''' return the horizontal rows of the cube '''
@@ -47,7 +49,8 @@ class Cube():
         start_slice: int = self.width * 2        
         end_slice: int = self.width * 3
         return horizontal_rows[start_slice : end_slice]
-
+    
+    # MARK: Build State
     def build_state(self, cube_string: str) -> list[list[str]]:
         '''
         Build a cube from a string
@@ -75,7 +78,8 @@ class Cube():
             else:
                 start += self.width
         return cube
-        
+    
+    # MARK: B default string
     def build_default_string(self) -> str: 
         ''' 
         build a default string using the objects colours
@@ -94,6 +98,7 @@ class Cube():
                 cube_string += self.colours[-1] * 3
         return cube_string
     
+     # MARK: Rotate Horizontal
     def rotate_horizontal(self, direction: bool = True, row_index: int = 0) -> None:
         ''' 
         Rotate a horizontal row of the cube, counting from top to bottom
@@ -108,6 +113,7 @@ class Cube():
             row = row[offset:] + row[:offset]
         self.rows = (row_index, row)
 
+# MARK: Main
 if __name__ == '__main__':
     cube = Cube()
     print(cube)
