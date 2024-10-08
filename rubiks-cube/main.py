@@ -20,7 +20,7 @@ class Cube():
         for i, line in enumerate(self.state):
             line_string = separator.join([item for item in line]) + '\n'
             if i not in self.horizontal_rows_index:
-                # if not a horizontal row, add space offsets to help allign the string output
+                # if not a horizontal row, add space offsets to help align the string output
                 line_string = separator * 6 + line_string
             string += line_string
         return string
@@ -42,6 +42,36 @@ class Cube():
         value = input[1]
         index += self.width * 2
         self.state[index] = value
+
+    # MARK:Columns
+    @property
+    def columns(self) -> list[list[str]]:
+        ''' return the horizontal rows of the cube '''
+        columns : list[list[str]] = []
+        for column_index in range(self.width):
+            columns.append([])
+            for row_index in range(self.height):
+                is_horizontal_row = row_index in self.horizontal_rows_index
+                fixed_column_index = column_index
+                if is_horizontal_row:
+                    fixed_column_index += self.width
+                row = self.state[row_index][column_index]
+                columns[column_index].append(row)
+        return columns
+
+    @columns.setter
+    def columns(self, input: tuple[int, list[str]]) -> None:
+        ''' 
+        set a horizontal row using a tuple of the index and row values
+        '''
+        index = input[0]
+        value = input[1]
+        for row_index in range(self.height):
+            is_horizontal_row = row_index in self.horizontal_rows_index
+            column_index = index
+            if is_horizontal_row:
+                column_index += self.width
+            self.state[row_index][column_index] = value[row_index]
 
     # MARK:H rows index
     def determine_horizontal_rows_index(self) -> list[int]:
@@ -120,8 +150,14 @@ if __name__ == '__main__':
     print(cube)
     # cube.rotate_horizontal(True, 0)
     # print(cube)
-
-    # cube.columns = (2, ['X', 'X', 'X'])
+    cube.columns = (2, [c for c in 'BBBRRRGGGOOO'])
+    for row in cube.columns:
+        for item in row:
+            print(item, end=' ')
+        print()
+    # print(cube.columns)
+    print()
+    print(cube)
     # print(cube)
     # for i in "hi 123    carla":
         # print(i)
