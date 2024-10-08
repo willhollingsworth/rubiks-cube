@@ -23,6 +23,23 @@ class Cube():
                 line_string = separator * 6 + line_string
             string += line_string
         return string
+    
+    @property
+    def rows(self) -> list[list[str]]:
+        ''' return the horizontal rows of the cube '''
+        start = self.horizontal_rows[0]
+        stop = self.horizontal_rows[-1] + 1
+        return self.state[start : stop]
+    
+    @rows.setter
+    def rows(self, input: tuple[int, list[str]]) -> None:
+        ''' 
+        set a horizontal row using a tuple of the index and row values
+        '''
+        index = input[0]
+        value = input[1]
+        index += self.width * 2
+        self.state[index] = value
 
     def determine_horizontal_rows(self) -> list[int]:
         ''' determine which rows of the cube are the longer horizontal rows'''
@@ -91,6 +108,7 @@ class Cube():
         is_horizontal_rotate: bool = layer >= self.width
         
         if is_horizontal_rotate:
+            #rotate a horizontal layer
             row = layer + self.width
             if direction:
                 # shift row to the right
@@ -98,12 +116,17 @@ class Cube():
             else:    
                 # shift row to the left
                 self.state[row] = self.state[row][self.width:] + self.state[row][:self.width]
-            
+        else:
+            #rotate a vertical layer
+            column = layer
 
 if __name__ == '__main__':
     cube = Cube()
     print(cube)
-    cube.rotate(layer=4, direction=False)
+    # for row in cube.rows:
+    #     for item in row:
+    #         print(item, end=' ')
+    #     print()
+    cube.rows = (2, ['X', 'X', 'X'])
     print(cube)
-    cube.rotate(layer=4, direction=False)
 
