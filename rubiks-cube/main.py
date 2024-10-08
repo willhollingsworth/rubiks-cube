@@ -46,16 +46,16 @@ class Cube():
     # MARK:Columns
     @property
     def columns(self) -> list[list[str]]:
-        ''' return the horizontal rows of the cube '''
+        ''' return the vertical columns of the cube '''
         columns : list[list[str]] = []
         for column_index in range(self.width):
             columns.append([])
             for row_index in range(self.height):
                 is_horizontal_row = row_index in self.horizontal_rows_index
-                fixed_column_index = column_index
+                column_index_shifted = column_index
                 if is_horizontal_row:
-                    fixed_column_index += self.width
-                row = self.state[row_index][column_index]
+                    column_index_shifted += self.width
+                row = self.state[row_index][column_index_shifted]
                 columns[column_index].append(row)
         return columns
 
@@ -68,10 +68,10 @@ class Cube():
         value = input[1]
         for row_index in range(self.height):
             is_horizontal_row = row_index in self.horizontal_rows_index
-            column_index = index
+            column_index_shifted = index
             if is_horizontal_row:
-                column_index += self.width
-            self.state[row_index][column_index] = value[row_index]
+                column_index_shifted += self.width
+            self.state[row_index][column_index_shifted] = value[row_index]
 
     # MARK:H rows index
     def determine_horizontal_rows_index(self) -> list[int]:
@@ -144,17 +144,36 @@ class Cube():
             row = row[offset:] + row[:offset]
         self.rows = (row_index, row)
 
+     # MARK: Rotate Horizontal
+    def rotate_vertical(self, direction: bool = True, column_index: int = 0) -> None:
+        ''' 
+        Rotate a vertical column of the cube, counting from left to right
+        '''
+        column = self.columns[column_index]
+        offset = self.width
+        if direction:
+            # shift column up
+            column = column[offset:] + column[:offset]
+        else:    
+            # shift column down
+            column = column[-offset:] + column[:-offset]
+        self.columns = (column_index, column)
+
 # MARK: Main
 if __name__ == '__main__':
     cube = Cube()
     print(cube)
     # cube.rotate_horizontal(True, 0)
+    cube.rotate_vertical()
+    cube.rotate_vertical()
+    cube.rotate_vertical()
+    cube.rotate_vertical()
     # print(cube)
-    cube.columns = (2, [c for c in 'BBBRRRGGGOOO'])
-    for row in cube.columns:
-        for item in row:
-            print(item, end=' ')
-        print()
+    # cube.columns = (2, [c for c in 'BBBRRRGGGOOO'])
+    # for row in cube.columns:
+    #     for item in row:
+    #         print(item, end=' ')
+    #     print()
     # print(cube.columns)
     print()
     print(cube)
