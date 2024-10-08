@@ -94,39 +94,29 @@ class Cube():
                 cube_string += self.colours[-1] * 3
         return cube_string
     
-    def rotate(self, direction: bool = True, layer: int = 0) -> None:
+    def rotate_horizontal(self, direction: bool = True, row_index: int = 0) -> None:
         ''' 
-        Rotate a layer of the cube in a given direction 
-        Direction: true for right or up
-        Layer: start counting from the top left along to the top right, then down to the bottom right
-        Example:
-        0 1 2
-        X X X 3
-        X X X 4
-        X X X 5
+        Rotate a horizontal row of the cube, counting from top to bottom
         '''
-        is_horizontal_rotate: bool = layer >= self.width
-        
-        if is_horizontal_rotate:
-            #rotate a horizontal layer
-            row = layer + self.width
-            if direction:
-                # shift row to the right
-                self.state[row] = self.state[row][-self.width:] + self.state[row][:-self.width]
-            else:    
-                # shift row to the left
-                self.state[row] = self.state[row][self.width:] + self.state[row][:self.width]
-        else:
-            #rotate a vertical layer
-            column = layer
+        row = self.rows[row_index]
+        offset = self.width
+        if direction:
+            # shift row to the right
+            row = row[-offset:] + row[:-offset]
+        else:    
+        # shift row to the left
+            row = row[offset:] + row[:offset]
+        self.rows = (row_index, row)
 
 if __name__ == '__main__':
     cube = Cube()
+    print(cube)
+    cube.rotate_horizontal(True, 0)
     print(cube)
     # for row in cube.rows:
     #     for item in row:
     #         print(item, end=' ')
     #     print()
-    cube.rows = (2, ['X', 'X', 'X'])
-    print(cube)
+    # cube.rows = (2, ['X', 'X', 'X'])
+    # print(cube)
 
