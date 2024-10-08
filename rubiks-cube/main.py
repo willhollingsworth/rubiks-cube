@@ -7,7 +7,7 @@ class Cube():
     height = width * 4
 
     def __init__(self, initial_state: str = ''):
-        self.horizontal_rows = self.determine_horizontal_rows()
+        self.horizontal_rows_index = self.determine_horizontal_rows_index()
         if len(initial_state) < 1:
             initial_state = self.build_default_string()
         self.state : list[list] = self.build_state(initial_state)
@@ -19,7 +19,7 @@ class Cube():
         string = ''
         for i, line in enumerate(self.state):
             line_string = separator.join([item for item in line]) + '\n'
-            if i not in self.horizontal_rows:
+            if i not in self.horizontal_rows_index:
                 # if not a horizontal row, add space offsets to help allign the string output
                 line_string = separator * 6 + line_string
             string += line_string
@@ -29,8 +29,8 @@ class Cube():
     @property
     def rows(self) -> list[list[str]]:
         ''' return the horizontal rows of the cube '''
-        start = self.horizontal_rows[0]
-        stop = self.horizontal_rows[-1] + 1
+        start = self.horizontal_rows_index[0]
+        stop = self.horizontal_rows_index[-1] + 1
         return self.state[start : stop]
     
     @rows.setter
@@ -43,7 +43,8 @@ class Cube():
         index += self.width * 2
         self.state[index] = value
 
-    def determine_horizontal_rows(self) -> list[int]:
+    # MARK:H rows index
+    def determine_horizontal_rows_index(self) -> list[int]:
         ''' determine which rows of the cube are the longer horizontal rows'''
         horizontal_rows: list = list(range(self.width * 4))
         start_slice: int = self.width * 2        
@@ -66,14 +67,14 @@ class Cube():
         start: int = 0
         end: int = 0
         for row in range(self.height):
-            if row in self.horizontal_rows:
+            if row in self.horizontal_rows_index:
                 end += self.width * 3
             else:
                 end += self.width
             sliced_string: str = cube_string[start : end]
             row_list: list = [c for c in sliced_string]
             cube.append(row_list)
-            if row in self.horizontal_rows:
+            if row in self.horizontal_rows_index:
                 start += self.width * 3
             else:
                 start += self.width
@@ -88,13 +89,13 @@ class Cube():
         cube_string: str = ''
         for row in range(self.height):
             colour_index:int = int(row / self.width)
-            if row < self.horizontal_rows[0]:
+            if row < self.horizontal_rows_index[0]:
               cube_string += self.colours[colour_index] * 3
-            elif row in self.horizontal_rows:
-                for h_row in self.horizontal_rows:
+            elif row in self.horizontal_rows_index:
+                for h_row in self.horizontal_rows_index:
                     colour_index: int = int(h_row - self.width - 1)
                     cube_string += self.colours[colour_index] * 3
-            elif row > self.horizontal_rows[-1]:
+            elif row > self.horizontal_rows_index[-1]:
                 cube_string += self.colours[-1] * 3
         return cube_string
     
@@ -117,12 +118,14 @@ class Cube():
 if __name__ == '__main__':
     cube = Cube()
     print(cube)
-    cube.rotate_horizontal(True, 0)
-    print(cube)
-    # for row in cube.rows:
-    #     for item in row:
-    #         print(item, end=' ')
-    #     print()
-    # cube.rows = (2, ['X', 'X', 'X'])
+    # cube.rotate_horizontal(True, 0)
     # print(cube)
+
+    # cube.columns = (2, ['X', 'X', 'X'])
+    # print(cube)
+    # for i in "hi 123    carla":
+        # print(i)
+    # print(cube)
+
+
 
